@@ -1,4 +1,4 @@
-namespace VotingSystem.Test
+namespace VotingSystem.Core.Test
 {
     public class VotingCounterManagerTests
     {

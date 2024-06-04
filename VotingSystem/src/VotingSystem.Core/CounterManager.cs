@@ -1,4 +1,6 @@
-﻿namespace VotingSystem.Test
+﻿using VotingSystem.Core.Models;
+
+namespace VotingSystem.Core
 {
     public class CounterManager
     {
