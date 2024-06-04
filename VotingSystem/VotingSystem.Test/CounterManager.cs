@@ -1,7 +1,4 @@
-﻿
-using FluentAssertions;
-
-namespace VotingSystem.Test
+﻿namespace VotingSystem.Test
 {
     public class CounterManager
     {
@@ -14,9 +11,7 @@ namespace VotingSystem.Test
         {
             var total = counters.Sum(c => c.VotingPercentage);
             if (total == 100) return;
-
             var excess = 100 - total;
-
             var highestPercentage = counters.Max(c => c.VotingPercentage);
             var highestCounters = counters.Where(c => c.VotingPercentage == highestPercentage).ToList();
             if (highestCounters.Count == 1)
@@ -27,9 +22,10 @@ namespace VotingSystem.Test
             {
                 var lowestPercentage = counters.Min(c => c.VotingPercentage);
                 var lowestCounter = counters.First(c => c.VotingPercentage == lowestPercentage);
-                lowestCounter.VotingPercentage = RoundUp(lowestCounter.VotingPercentage += excess);
+                double num = lowestCounter.VotingPercentage += excess;
+                lowestCounter.VotingPercentage = RoundUp(num);
             }
         }
-        public static double RoundUp(double num) => Math.Round(num, 2);
+        double RoundUp(double num) => Math.Round(num, 2);
     }
 }
