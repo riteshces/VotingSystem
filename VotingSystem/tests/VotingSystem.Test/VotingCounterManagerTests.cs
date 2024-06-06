@@ -1,13 +1,15 @@
+using AutoFixture;
+
 namespace VotingSystem.Core.Test
 {
     public class VotingCounterManagerTests
     {
         public readonly VotingCounter _votingCounter;
-        public readonly CounterManager _counterManager;
+        public readonly VotingCounterManager _counterManager;
         public VotingCounterManagerTests()
         {
             _votingCounter = new VotingCounter();
-            _counterManager = new CounterManager();
+            _counterManager = new VotingCounterManager();
         }
 
         [Fact]
@@ -39,7 +41,7 @@ namespace VotingSystem.Core.Test
         [Theory]
         [InlineData(5, 10, 50)]
         [InlineData(1, 3, 33.33)]
-        [InlineData(2, 3, 66.67)]
+        [InlineData(2, 3, 66.66)]
         public void GetVotingPercentage_Should_Return_Percentage_Of_Voting_Option_Count_Based_On_Total_Count(int count, int totalCount, double expectedPercentage)
         {
             //Arrange
@@ -58,18 +60,18 @@ namespace VotingSystem.Core.Test
         {
             //Arrange
             var expectedResult = 33.33;
-            var counter1 = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var counter2 = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var counter3 = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var counters = new List<VotingCounter> { counter1, counter2, counter3 };
+            var modiCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
+            var oppositionCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
+            var initialCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
+            var counters = new List<VotingCounter> { modiCounter, oppositionCounter, initialCounter };
 
             //Act
             _counterManager.ResolveAccess(counters);
 
             //Assert
-            expectedResult.Should().Be(counter1.VotingPercentage);
-            expectedResult.Should().Be(counter2.VotingPercentage);
-            expectedResult.Should().Be(counter3.VotingPercentage);
+            expectedResult.Should().Be(modiCounter.VotingPercentage);
+            expectedResult.Should().Be(oppositionCounter.VotingPercentage);
+            expectedResult.Should().Be(initialCounter.VotingPercentage);
         }
 
         [Theory]
@@ -78,16 +80,16 @@ namespace VotingSystem.Core.Test
         public void Resolve_Access_Should_Add_Access_To_Max_Percentage_When_All_Counter_Are_Not_Equal(double initial, double expected, double lowest)
         {
             //Arrange
-            var counter1 = new VotingCounter { VotingPercentage = initial };
-            var counter2 = new VotingCounter { VotingPercentage = lowest };
-            var counters = new List<VotingCounter> { counter1, counter2 };
+            var initialCounter = new VotingCounter { VotingPercentage = initial };
+            var oppositionCounter = new VotingCounter { VotingPercentage = lowest };
+            var counters = new List<VotingCounter> { initialCounter, oppositionCounter };
 
             //Act
             _counterManager.ResolveAccess(counters);
 
             //Assert
-            expected.Should().Be(counter1.VotingPercentage);
-            lowest.Should().Be(counter2.VotingPercentage);
+            expected.Should().Be(initialCounter.VotingPercentage);
+            lowest.Should().Be(oppositionCounter.VotingPercentage);
         }
 
         [Theory]
@@ -96,44 +98,44 @@ namespace VotingSystem.Core.Test
         public void Resolve_Access_Should_Add_Access_To_Min_Percentage_When_Have_More_Than_One_Highest_Counter(double initial, double expected, double highest)
         {
             //Arrange
-            var counter1 = new VotingCounter { VotingPercentage = highest };
-            var counter2 = new VotingCounter { VotingPercentage = highest };
-            var counter3 = new VotingCounter { VotingPercentage = initial };
-            var counters = new List<VotingCounter> { counter1, counter2, counter3 };
+            var modiCounter = new VotingCounter { VotingPercentage = highest };
+            var oppositionCounter = new VotingCounter { VotingPercentage = highest };
+            var initialCounter = new VotingCounter { VotingPercentage = initial };
+            var counters = new List<VotingCounter> { modiCounter, oppositionCounter, initialCounter };
 
             //Act
             _counterManager.ResolveAccess(counters);
 
             //Assert
-            highest.Should().Be(counter1.VotingPercentage);
-            highest.Should().Be(counter2.VotingPercentage);
-            expected.Should().Be(counter3.VotingPercentage);
+            highest.Should().Be(modiCounter.VotingPercentage);
+            highest.Should().Be(oppositionCounter.VotingPercentage);
+            expected.Should().Be(initialCounter.VotingPercentage);
         }
 
         [Fact]
         public void Resolve_Access_Should_Not_Add_Access_If_Total_Pecentage_Is_100()
         {
             //Arrange
-            var expectedResult1 = 80d;
-            var expectedResult2 = 20d;
-            var counter1 = new VotingCounter { VoteCount = 4, VotingPercentage = 80 };
-            var counter2 = new VotingCounter { VoteCount = 1, VotingPercentage = 20 };
-            var counters = new List<VotingCounter> { counter1, counter2 };
+            var expectedResult80 = 80d;
+            var expectedResult20 = 20d;
+            var counterWithVotingPercentage80 = new VotingCounter { VoteCount = 4, VotingPercentage = 80 };
+            var counterWithVotingPercentage20 = new VotingCounter { VoteCount = 1, VotingPercentage = 20 };
+            var counters = new List<VotingCounter> { counterWithVotingPercentage80, counterWithVotingPercentage20 };
 
             //Act
             _counterManager.ResolveAccess(counters);
 
             //Assert
-            expectedResult1.Should().Be(counter1.VotingPercentage);
-            expectedResult2.Should().Be(counter2.VotingPercentage);
+            expectedResult80.Should().Be(counterWithVotingPercentage80.VotingPercentage);
+            expectedResult20.Should().Be(counterWithVotingPercentage20.VotingPercentage);
         }
-
-        public static readonly IEnumerable<object[]> TestData = new[]
-        {
-            new object[] {"Yes", 5},
-            new object[] {"No", 5}
-        };
+        public static IEnumerable<object[]> TestData =>
+         new[]
+         {
+            new object[] { new Fixture().Create<string>(), new Fixture().Create<int>() },
+            new object[] { new Fixture().Create<string>(), new Fixture().Create<int>() }
+         };
     }
 
-    
+
 }

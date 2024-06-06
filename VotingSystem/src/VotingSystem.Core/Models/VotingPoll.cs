@@ -1,6 +1,4 @@
-﻿using VotingSystem.Core.Models;
-
-namespace VotingSystem.Core
+﻿namespace VotingSystem.Core.Models
 {
     public class VotingPoll
     {

@@ -2,8 +2,8 @@
 {
     public class VotingPollRequest
     {
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string[] Names { get; set; }
+        public string Title { get; init; }
+        public string Description { get; init; }
+        public string[] Names { get; init; }
     }
 }

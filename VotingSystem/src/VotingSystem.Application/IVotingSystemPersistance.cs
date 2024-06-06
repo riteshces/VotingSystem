@@ -1,4 +1,4 @@
-﻿using VotingSystem.Core;
+﻿using VotingSystem.Core.Models;
 
 namespace VotingSystem.Application
 {

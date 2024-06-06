@@ -1,4 +1,6 @@
-﻿namespace VotingSystem.Core.Test
+﻿using Xunit.Abstractions;
+
+namespace VotingSystem.Core.Test
 {
     public class VotingPollFactoryTests
     {
@@ -19,16 +21,26 @@
         public void Create_Poll_Should_Throw_When_Less_Than_Two_Counters_Name()
         {
             //Arrange
-            _request.Names = new[] { "option1" };
-            
+            VotingPollRequest requestWithSingleName = new VotingPollRequest
+            {
+                Names = new string[] { "option1" },
+                Title = "",
+                Description = ""
+            };
+            VotingPollRequest requestWithBlankNames = new VotingPollRequest
+            {
+                Names = new string[] { },
+                Title = "",
+                Description = ""
+            };
+
             //Act
-            Action action = () => _factory.Create(_request);
-            _request.Names = new string[] { };
-            Action action2 = () => _factory.Create(_request);
+            Action actionWithOneOption = () => _factory.Create(requestWithSingleName);
+            Action actionWithBlankOption = () => _factory.Create(requestWithBlankNames);
 
             //Assert
-            action.Should().Throw<ArgumentException>().WithMessage("Create poll required atleaset two names.");
-            action2.Should().Throw<ArgumentException>().WithMessage("Create poll required atleaset two names.");
+            actionWithOneOption.Should().Throw<ArgumentException>().WithMessage("Create poll required atleaset two names.");
+            actionWithBlankOption.Should().Throw<ArgumentException>().WithMessage("Create poll required atleaset two names.");
         }
 
         [Fact]
@@ -39,10 +51,7 @@
 
             //Assert
             result.Counters.Should().HaveCount(_request.Names.Length);
-            foreach (var name in _request.Names)
-            {
-                result.Counters.Should().Contain(c => c.VotingOptionName == name);
-            }
+            _request.Names.Should().OnlyContain(name => result.Counters.Any(c => c.VotingOptionName == name));
         }
 
         [Fact]
@@ -59,8 +68,12 @@
         public void Create_Add_Description_To_Poll()
         {
             //Arrange
-            _request.Title= "test";
-            _request.Description = "test description";
+            VotingPollRequest _request = new VotingPollRequest
+            {
+                Names = new string[] { "option1", "option2" },
+                Title = "test",
+                Description = "test description"
+            };
 
             //Act
             var poll = _factory.Create(_request);
