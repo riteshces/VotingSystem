@@ -1,15 +1,24 @@
-﻿using VotingSystem.Core.Models;
+﻿using System.Diagnostics.Metrics;
+using VotingSystem.Core.Contracts;
+using VotingSystem.Core.Models;
 
 namespace VotingSystem.Core
 {
-    public class VotingCounterManager
+    public class VotingCounterManager : IVotingCounterManager
     {
-        public VotingCounter GetVotingPercentage(VotingCounter votingCounter, int total)
+        public List<CounterStatistics> GetVotingPercentage(ICollection<VotingCounter> counters)
         {
-            votingCounter.VotingPercentage = Math.Round((votingCounter.VoteCount * 100.0) / total, 2, MidpointRounding.ToZero);
-            return votingCounter;
+            var totalCount = counters.Sum(x => x.VoteCount);
+
+            return counters.Select(x => new CounterStatistics
+            {
+                Id = x.Id,
+                VotingOptionName = x.VotingOptionName,
+                VoteCount = x.VoteCount,
+                VotingPercentage = totalCount > 0 ? Math.Round((x.VoteCount * 100.0 / totalCount), 2, MidpointRounding.ToZero) : 0
+            }).ToList();
         }
-        public void ResolveAccess(List<VotingCounter> counters)
+        public void ResolveExcess(List<CounterStatistics> counters)
         {
             var total = counters.Sum(c => c.VotingPercentage);
             if (total == 100) return;

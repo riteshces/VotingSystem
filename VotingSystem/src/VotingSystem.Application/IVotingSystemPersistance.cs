@@ -4,6 +4,9 @@ namespace VotingSystem.Application
 {
     public interface IVotingSystemPersistance
     {
-        void SaveVotingPoll(VotingPoll votingPoll);
+        Task<VotingPoll> GetPollAsync(string pollId);
+        Task<Vote> SaveVoteAsync(Vote vote);
+        Task<VotingPoll> SaveVotingPollAsync(VotingPoll votingPoll);
+        Task<bool> VoteExists(Vote vote);
     }
 }

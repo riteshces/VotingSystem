@@ -11,7 +11,11 @@ namespace VotingSystem.Core
             {
                 throw new ArgumentException("Create poll required atleaset two names.");
             }
-            return new VotingPoll { Title = request.Title, Description = request.Description, Counters = request.Names.Select(name => new VotingCounter { VotingOptionName = name }) };
+            return new VotingPoll { 
+                Title = request.Title, 
+                Description = request.Description, 
+                Counters = request.Names.Select(name => new VotingCounter { VotingOptionName = name }).ToList()
+            };
         }
     }
 }

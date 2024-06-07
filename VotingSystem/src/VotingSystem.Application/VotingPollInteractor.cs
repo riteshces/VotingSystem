@@ -16,7 +16,7 @@ namespace VotingSystem.Application
         public void CreateVotingPoll(VotingPollRequest request)
         {
             var poll = _votingPollFactory.Create(request);
-            _persistance.SaveVotingPoll(poll);
+            _persistance.SaveVotingPollAsync(poll);
         }
     }
 }

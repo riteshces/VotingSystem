@@ -36,7 +36,7 @@
             _interactor.CreateVotingPoll(_request);
 
             //Assert
-            _mockPersistance.Verify(x => x.SaveVotingPoll(poll));
+            _mockPersistance.Verify(x => x.SaveVotingPollAsync(poll));
         }
     }
 }

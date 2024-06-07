@@ -1,12 +1,20 @@
-﻿namespace VotingSystem.Core.Models
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace VotingSystem.Core.Models
 {
     public class VotingPoll
     {
         public VotingPoll()
         {
-            Counters = Enumerable.Empty<VotingCounter>();
+            Counters = new List<VotingCounter>();
         }
-        public IEnumerable<VotingCounter> Counters { get; set; }
+
+        [BsonId]
+        [BsonElement("_id"), BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+
+        public List<VotingCounter> Counters { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
     }

@@ -1,4 +1,6 @@
 using AutoFixture;
+using System.Diagnostics.Metrics;
+using System.Reflection;
 
 namespace VotingSystem.Core.Test
 {
@@ -6,6 +8,10 @@ namespace VotingSystem.Core.Test
     {
         public readonly VotingCounter _votingCounter;
         public readonly VotingCounterManager _counterManager;
+
+        public const string CounterId = "1";
+        public const string CounterName = "Counter Name";
+        public VotingCounter _counter = new VotingCounter { Id = CounterId, VotingOptionName = CounterName, VoteCount = 5 };
         public VotingCounterManagerTests()
         {
             _votingCounter = new VotingCounter();
@@ -45,10 +51,11 @@ namespace VotingSystem.Core.Test
         public void GetVotingPercentage_Should_Return_Percentage_Of_Voting_Option_Count_Based_On_Total_Count(int count, int totalCount, double expectedPercentage)
         {
             //Arrange
-            _votingCounter.VoteCount = count;
+            _counter.VoteCount = count;
+            var counter = new VotingCounter { VoteCount = totalCount - count };
 
             //Act
-            var result = _counterManager.GetVotingPercentage(_votingCounter, totalCount);
+            var result = new VotingCounterManager().GetVotingPercentage(new[] { _counter, counter }).First();
 
             //Assert
             result.VoteCount.Should().Be(count).And.BePositive();
@@ -60,13 +67,13 @@ namespace VotingSystem.Core.Test
         {
             //Arrange
             var expectedResult = 33.33;
-            var modiCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var oppositionCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var initialCounter = new VotingCounter { VoteCount = 1, VotingPercentage = 33.33 };
-            var counters = new List<VotingCounter> { modiCounter, oppositionCounter, initialCounter };
+            var modiCounter = new CounterStatistics { VoteCount = 1, VotingPercentage = 33.33 };
+            var oppositionCounter = new CounterStatistics { VoteCount = 1, VotingPercentage = 33.33 };
+            var initialCounter = new CounterStatistics { VoteCount = 1, VotingPercentage = 33.33 };
+            var counters = new List<CounterStatistics> { modiCounter, oppositionCounter, initialCounter };
 
             //Act
-            _counterManager.ResolveAccess(counters);
+            _counterManager.ResolveExcess(counters);
 
             //Assert
             expectedResult.Should().Be(modiCounter.VotingPercentage);
@@ -80,12 +87,12 @@ namespace VotingSystem.Core.Test
         public void Resolve_Access_Should_Add_Access_To_Max_Percentage_When_All_Counter_Are_Not_Equal(double initial, double expected, double lowest)
         {
             //Arrange
-            var initialCounter = new VotingCounter { VotingPercentage = initial };
-            var oppositionCounter = new VotingCounter { VotingPercentage = lowest };
-            var counters = new List<VotingCounter> { initialCounter, oppositionCounter };
+            var initialCounter = new CounterStatistics { VotingPercentage = initial };
+            var oppositionCounter = new CounterStatistics { VotingPercentage = lowest };
+            var counters = new List<CounterStatistics> { initialCounter, oppositionCounter };
 
             //Act
-            _counterManager.ResolveAccess(counters);
+            _counterManager.ResolveExcess(counters);
 
             //Assert
             expected.Should().Be(initialCounter.VotingPercentage);
@@ -98,13 +105,13 @@ namespace VotingSystem.Core.Test
         public void Resolve_Access_Should_Add_Access_To_Min_Percentage_When_Have_More_Than_One_Highest_Counter(double initial, double expected, double highest)
         {
             //Arrange
-            var modiCounter = new VotingCounter { VotingPercentage = highest };
-            var oppositionCounter = new VotingCounter { VotingPercentage = highest };
-            var initialCounter = new VotingCounter { VotingPercentage = initial };
-            var counters = new List<VotingCounter> { modiCounter, oppositionCounter, initialCounter };
+            var modiCounter = new CounterStatistics { VotingPercentage = highest };
+            var oppositionCounter = new CounterStatistics { VotingPercentage = highest };
+            var initialCounter = new CounterStatistics { VotingPercentage = initial };
+            var counters = new List<CounterStatistics> { modiCounter, oppositionCounter, initialCounter };
 
             //Act
-            _counterManager.ResolveAccess(counters);
+            _counterManager.ResolveExcess(counters);
 
             //Assert
             highest.Should().Be(modiCounter.VotingPercentage);
@@ -118,12 +125,12 @@ namespace VotingSystem.Core.Test
             //Arrange
             var expectedResult80 = 80d;
             var expectedResult20 = 20d;
-            var counterWithVotingPercentage80 = new VotingCounter { VoteCount = 4, VotingPercentage = 80 };
-            var counterWithVotingPercentage20 = new VotingCounter { VoteCount = 1, VotingPercentage = 20 };
-            var counters = new List<VotingCounter> { counterWithVotingPercentage80, counterWithVotingPercentage20 };
+            var counterWithVotingPercentage80 = new CounterStatistics { VoteCount = 4, VotingPercentage = 80 };
+            var counterWithVotingPercentage20 = new CounterStatistics { VoteCount = 1, VotingPercentage = 20 };
+            var counters = new List<CounterStatistics> { counterWithVotingPercentage80, counterWithVotingPercentage20 };
 
             //Act
-            _counterManager.ResolveAccess(counters);
+            _counterManager.ResolveExcess(counters);
 
             //Assert
             expectedResult80.Should().Be(counterWithVotingPercentage80.VotingPercentage);
