@@ -27,6 +27,10 @@ namespace VotingSystem.API.Controllers
         {
             Vote vote = new Vote() { CounterId = voteRequest.CounterId, UserId = voteRequest.UserId, PollId = voteRequest.PollId };
             var result = await _votingInteractor.Vote(vote);
+            if (result == null)
+            {
+                return BadRequest(result);
+            }
             return Ok(result);
         }
 

@@ -99,6 +99,5 @@ namespace VotingSystem.API.Tests
             // Assert
             result.Should().BeOfType<OkObjectResult>();
         }
-
     }
 }

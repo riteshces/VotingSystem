@@ -46,11 +46,14 @@ namespace VotingSystem.API.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("/GetStatistics/{pollId:length(24)}")]
         public async Task<IActionResult> GetStatistics(string pollId)
         {
             Statistics = await _statisticsInteractor.GetStatistics(pollId);
+            if (Statistics == null)
+            {
+                return BadRequest("No statistics found.");
+            }
             return Ok(Statistics);
         }
     }

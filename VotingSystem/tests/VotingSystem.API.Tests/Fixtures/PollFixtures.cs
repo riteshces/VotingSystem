@@ -9,7 +9,6 @@ namespace VotingSystem.API.Tests.Fixtures
             Fixture fixture = new Fixture();
             return fixture.Create<VotingPollRequest>();
         }
-
         public static VotingPoll GetVotingPoll()
         {
             Fixture fixture = new Fixture();

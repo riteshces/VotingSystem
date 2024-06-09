@@ -32,13 +32,11 @@ namespace VotingSystem.Database
             await _appDbContext.VotingPolls.UpdateOneAsync(filter, update);
             return vote;
         }
-
         public async Task<VotingPoll> SaveVotingPollAsync(VotingPoll votingPoll)
         {
             await _appDbContext.VotingPolls.InsertOneAsync(votingPoll);
             return votingPoll;
         }
-
         public async Task<bool> VoteExists(Vote vote)
         {
             var filter = Builders<Vote>.Filter.Eq(v => v.UserId, vote.UserId);

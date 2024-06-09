@@ -9,7 +9,6 @@ namespace VotingSystem.Core
         public List<CounterStatistics> GetVotingPercentage(ICollection<VotingCounter> counters)
         {
             var totalCount = counters.Sum(x => x.VoteCount);
-
             return counters.Select(x => new CounterStatistics
             {
                 Id = x.Id,
