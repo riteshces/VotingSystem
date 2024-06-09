@@ -9,6 +9,7 @@ namespace VotingSystem.Core.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string UserId { get; set; }
+        public string PollId { get; set; }
         public string CounterId { get; set; }
     }
 }

@@ -11,7 +11,11 @@ namespace VotingSystem.Core.Models
         public string VotingOptionName { get; set; }
         public int VoteCount { get; set; }
         public double VotingPercentage { get; set; }
+        public List<Vote> Votes { get; set; }
 
-        public ICollection<Vote> Votes { get; set; }
+        public VotingCounter()
+        {
+            Id = Convert.ToString(ObjectId.GenerateNewId());
+        }
     }
 }

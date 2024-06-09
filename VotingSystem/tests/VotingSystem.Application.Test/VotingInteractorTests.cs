@@ -30,10 +30,10 @@ namespace VotingSystem.Application.Test
         {
             //Act
             _mockPersistance.Setup(x => x.VoteExists(_vote)).ReturnsAsync(true);
-            await _votingInteractor.Vote(_vote);
+            Func<Task> result = async ()=> { await _votingInteractor.Vote(_vote); };
 
             //Assert
-            _mockPersistance.Verify(x => x.SaveVoteAsync(_vote), Times.Never);
+            result.Should().ThrowAsync<InvalidOperationException>().WithMessage("Vote already exists");
         }
     }
 }

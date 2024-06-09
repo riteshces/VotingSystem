@@ -1,8 +1,9 @@
-﻿using VotingSystem.Core.Models;
+﻿using VotingSystem.Application.Contracts;
+using VotingSystem.Core.Models;
 
 namespace VotingSystem.Application
 {
-    public class VotingInteractor
+    public class VotingInteractor:IVotingInteractor
     {
         private readonly IVotingSystemPersistance _persistance;
 
@@ -11,13 +12,16 @@ namespace VotingSystem.Application
             _persistance = persistance;
         }
 
-        public async Task Vote(Vote vote)
+        public async Task<Vote> Vote(Vote vote)
         {
             if (!await _persistance.VoteExists(vote))
             {
-                await _persistance.SaveVoteAsync(vote);
+                return await _persistance.SaveVoteAsync(vote);
             }
-
+            else
+            {
+                throw new InvalidOperationException("Vote already exists");
+            }
         }
     }
 }

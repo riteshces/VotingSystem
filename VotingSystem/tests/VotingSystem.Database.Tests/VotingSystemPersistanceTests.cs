@@ -1,6 +1,4 @@
-﻿
-
-namespace VotingSystem.Database.Tests
+﻿namespace VotingSystem.Database.Tests
 {
     public class VotingSystemPersistanceTests
     {

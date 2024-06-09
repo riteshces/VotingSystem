@@ -29,7 +29,7 @@
             var interactor = new StatisticsInteractor(
                _mockPersistance.Object,
                _mockCounterManager.Object);
-            var pollStatistics = interactor.GetStatistics(pollId);
+            var pollStatistics = interactor.GetStatistics(pollId).Result;
 
             //Assert
             pollStatistics.Title.Should().BeEquivalentTo(poll.Title);
